@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{{ app_name }}</title>
+      <meta charset="utf-8">
+      <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <style>
+      </style> 
+   </head>
+   <body>
+      <nav class="navbar navbar-default">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="/home">{{ app_name }}</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+               <li><a href="/"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+            </ul>
+         </div>
+      </nav>
+      <div class="container">
+         <div class="jumbotron">
+            <div class="row">
+               <h2>Profile</h2>
+            </div>
+            <div class="row">
+               <p>
+                  Name: {{ profile['name'] }}<br>
+                  Email address: {{ profile['email'] }}<br>
+                  Registered on: {{ profile['registered'] }}<br>
+                  Last modified on: {{ profile['modified'] if profile['modified'] else '--' }} <br>
+               </p>
+            </div>
+            <div class="row">
+               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalDeleteProfile" data-backdrop="static">Delete</button>
+               <button type="button" class="btn btn-primary" onclick="location.href='{{ url_for('home') }}'">Cancel</button>
+            </div>
+         </div>
+        
+         <!-- Delete profile modal -->
+         <div id="modalDeleteProfile" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Delete Profile</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>You are going to delete your profile permanently!</strong> All your active jobs will be immediately cancelled and all results will be immediately removed.</p>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

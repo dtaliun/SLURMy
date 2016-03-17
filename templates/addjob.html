@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{{ app_name }}</title>
+      <meta charset="utf-8">
+      <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <style>
+         .btn-file {
+            position: relative;
+            overflow: hidden;
+         }
+
+         .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: inherit;
+            display: block;
+         }
+      </style>
+      <script>
+         $(document).on('change', '.btn-file :file', function() {
+            var files = $(this).get(0).files;
+            $(this).trigger('fileselect', [files]);
+         });
+
+         $(document).ready(function() {
+            $('.btn-file :file').on('fileselect', function(event, files) {
+               var textarea = $(this).parents('.form-group').find('textarea');
+               var text = files[0].name;
+               for (var i = 1; i < files.length; ++i) {
+                  text += "\n" + files[i].name;
+               }
+               textarea.val(text);
+            });
+
+            $('#submit').click(function() {
+               var uploadData = new FormData($('form')[0]);
+               $.ajax({
+                  url: '{{ url_for("uploadjob") }}',
+                  type: 'POST',
+                  data: uploadData,
+                  cache: false,
+                  contentType: false,
+                  processData: false,
+                  xhr: function() {
+                     var xhr = new window.XMLHttpRequest();
+                     xhr.upload.addEventListener(
+                        "progress", 
+                        function(e) {
+                           if (e.lengthComputable) {
+                              var percentComplete = Math.round((e.loaded / e.total) * 100) ;
+                              $('.progress-bar').css('width', percentComplete + '%').attr('aria-valuenow', percentComplete);
+                              $('.progress-bar').text(percentComplete + '%');
+                           }
+                        }, 
+                        false);
+                     return xhr;
+                  },
+                  beforeSend: function() {
+                     $('#modalUploadProgress p').css('display', 'none');
+                     $('#modalUploadProgress button').prop('disabled', true);
+                     $('.progress-bar').css('width', '0%').attr('aria-valuenow', 0);
+                     $('.progress-bar').text('0%').removeClass('progress-bar-success').addClass('progress-bar-info');
+                     $('.progress').css('display', 'block'); 
+                     $('#modalUploadProgress').modal({backdrop: false});
+                  },
+                  complete: function() {
+                     $('#modalUploadProgress button').prop('disabled', false);
+                  },
+                  error: function(xhr) {
+                     $('.progress').css('display', 'none');
+                     $('#modalUploadProgress p').css('display', 'block');
+                  },
+                  success: function(data) {
+                     $('.progress-bar').text('Success').removeClass('progress-bar-info').addClass('progress-bar-success');
+                  }
+               });   
+            });
+         });
+      </script>
+   </head>
+   <body>
+      <nav class="navbar navbar-default">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="/home">{{ app_name }}</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+               <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+            </ul>
+         </div>
+      </nav>
+      <div class="container">
+         <div class="jumbotron">
+            <div class="row text-center">
+            {% if error %}
+               <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endif %}
+            </div>         
+            <div class="row">
+               <div class="col-md-offset-3 col-md-6">
+                  <p>Please fill in required fields</p>
+               </div>
+            </div>
+            <form class="form-horizontal" role="form" enctype="multipart/form-data">
+               <div class="form-group">
+                  <div class="col-md-offset-3 col-md-6">
+                      <input type="text" class="form-control" id="name" name="name" placeholder="Job name">
+                  </div>
+               </div> 
+               <div class="form-group">
+                  <div class="col-md-offset-3 col-md-6">
+                     <textarea class="form-control" id="description" name="description" placeholder="Job description"></textarea> 
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-md-offset-3 col-md-6">
+                     <span class="btn btn-default btn-file">
+                        Input Files<input type="file" id="fileupload" name="files" multiple>
+                     </span>
+                     <textarea class="form-control" placeholder="Files to upload" readonly></textarea>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <div class="col-md-offset-3 col-md-6">
+                     <!-- <button type="submit" class="btn btn-primary">Submit</button> -->
+                     <!-- <button id="submit" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalUploadProgress" data-backdrop="static">Submit1</button> -->
+                     <button type="button" class="btn btn-primary" id="submit">Submit</button>
+                     <button type="button" class="btn btn-default" onclick="location.href='{{ url_for('home') }}'">Cancel</button>
+                  </div>
+              </div> 
+            </form>
+         </div>
+      </div>
+
+      <!-- Upload progress modal -->
+      <div id="modalUploadProgress" class="modal fade" role="dialog">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h4 class="modal-title">Uploading...</h4>
+               </div>
+               <div class="modal-body">
+                  <div class="progress">
+                     <div class="progress-bar progress-bar-info progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 25px; width: 0%;">0%</div>
+                  </div>
+                  <p class="text-danger" style="display: none;"><strong>File upload was not successful!</strong> For some reason {{app_name}} had problems while uploading your files. Please, check your input and try one more time. If you experience this problem again, then contact us.</p>
+               </div>
+               <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-dismiss="modal" disabled>Close</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+   </body>
+</html>

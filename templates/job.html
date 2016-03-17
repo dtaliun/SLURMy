@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{{ app_name }}</title>
+      <meta charset="utf-8">
+      <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <style>
+      </style> 
+   </head>
+   <body>
+      <nav class="navbar navbar-default">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="/home">{{ app_name }}</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+               <li><a href="/"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+            </ul>
+         </div>
+      </nav>
+      <div class="container">
+         <div class="jumbotron">
+            <div class="row">
+               <h2>Job {{ job['number'] }}</h2>
+            </div>
+            <div class="row">
+               <p>
+                  Job name: {{ job['name'] }}<br>
+                  Job description: {{ job['description'] }}<br>
+                  Submitted on: {{ job['submitted_on_date'] }}<br>
+                  Finished on: {{ job['finished_on_date'] }} <br>
+               </p>
+            </div>
+            <div class="row">
+               <div class="list-group">
+               {% for file in result_files %}
+                  <a href="{{ url_for('result', number = job['number'], name = file[0]) }}" class="list-group-item">{{ file[0] }}<div class="pull-right">{{ file[1] }} KB</div></a> 
+               {% endfor %}
+               </div>
+            </div>
+            <div class="row">
+               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalDeleteProfile" data-backdrop="static">Delete</button>
+               <button type="button" class="btn btn-primary" onclick="location.href='{{ url_for('home') }}'">Cancel</button>
+            </div>
+         </div>
+        
+         <!-- Delete profile modal -->
+         <div id="modalDeleteProfile" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                  <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title">Delete Profile</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p><strong>You are going to delete your profile permanently!</strong> All your active jobs will be immediately cancelled and all results will be immediately removed.</p>
+                  </div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

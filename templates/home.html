@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{{ app_name  }}</title>
+      <meta charset="utf-8">
+      <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <style>
+         .panel:hover {
+            cursor: pointer;
+            box-shadow: 2px 2px 10px;
+         }
+      </style>
+      <script type="text/javascript">
+         $(function() {
+            $(".panel").hover(
+               function() {
+                  $(this).removeClass('panel-default');
+                  $(this).addClass('panel-primary');
+               },
+               function() {
+                  $(this).removeClass('panel-primary');
+                  $(this).addClass('panel-default');
+               }
+            );      
+         });
+      </script>
+   </head>
+   <body>
+      <nav class="navbar navbar-default">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="#">{{ app_name }}</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+               <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+            </ul>
+         </div>
+      </nav>
+      <div class="container">
+         <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+               <div class="panel panel-default" onclick="location.href='{{ url_for('jobs', page=1, size=10) }}'">
+                  <div class="panel-heading"><span class="glyphicon glyphicon-stats"></span> Monitor jobs</div>
+                  <div class="panel-body">
+                     Finished <span class="badge">{{ jobs['finished'] }}</span><br>
+                     Running <span class="badge">{{ jobs['running'] }}</span><br>
+                     Queued <span class="badge">{{ jobs['queued'] }}</span><br>
+                     Submitted <span class="badge">{{ jobs['submitted'] }}</span>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-4">
+               <div class="panel panel-default" onclick="location.href='{{ url_for('addjob') }}'">
+                  <div class="panel-heading"><span class="glyphicon glyphicon-plus"></span> Add job</div>
+                  <div class="panel-body">
+                     <p>Hey, click here to submit a new job!</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+               <div class="panel panel-default" onclick="location.href='{{ url_for('profile') }}'">
+                  <div class="panel-heading"><span class="glyphicon glyphicon-edit"></span> Edit profile</div>
+                  <div class="panel-body">
+                     Name: {{ profile['name'] }}<br>
+                     Email: {{ profile['email'] }}
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

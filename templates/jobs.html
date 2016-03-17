@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>{{ app_name }}</title>
+      <meta charset="utf-8">
+      <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cerulean/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+      <style>
+      </style>
+   </head>
+   <body>
+      <nav class="navbar navbar-default">
+         <div class="container-fluid">
+            <div class="navbar-header">
+               <a class="navbar-brand" href="/home">{{ app_name }}</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+               <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></li>
+            </ul>
+         </div>
+      </nav>
+      <div class="container">
+         {% if not jobs %}
+         <div class="alert alert-info text-center" role="alert">You don't have any jobs</div> 
+         {% else %}
+         <div class="row">
+            <table class="table">
+               <thead>
+                  <tr>
+                     <th class="col-md=1">Number</th>
+                     <th class="col-md-8">Name</th>
+                     <th class="col-md-2">Status</th>
+                     <th class="col-md-1"></th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for job in jobs %}
+                  {% if job['status'] == 'Finished' %}
+                  <tr class="success">
+                  {% elif job['status'] == 'Waiting' %}
+                  <tr class="warning">
+                  {% elif job['status'] == 'Running' %}
+                  <tr class="info">
+                  {% else %}
+                  <tr>
+                  {% endif %}
+                     <td>{{ job['number'] }} </td>
+                     <td>{{ job['name'] }}</td>
+                     <td>{{ job['status'] }}</td>
+                     <td>
+                        <div class="btn-group pull-right">
+                        <a href="{{ url_for('job', number = job['number']) }}" role="button"><span class="glyphicon glyphicon-eye-open"></span></a>
+                        <a href="" role="button"><span class="glyphicon glyphicon-off"></span></a>
+                        <span class="glyphicon glyphicon-trash text-muted"></span>
+                        </div>
+                     </td>
+                  </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+            <!-- <ul class="list-group">
+               {% for job in jobs %}
+               <li class="list-group-item">
+                  {{ job['name'] }}
+                  queued
+                  <div class="btn-group pull-right">
+                     <a href="" role="button"><span class="glyphicon glyphicon-eye-open"></span></a>
+                     <a href="" role="button"><span class="glyphicon glyphicon-off"></span></a>
+                     <span class="glyphicon glyphicon-trash text-muted"></span>
+                  </div>
+               </li>
+               {% endfor %}
+            </ul> -->
+         </div>        
+         <nav>
+            <ul class="pager">
+               {% if page != 1 %}
+               <li><a href="{{ url_for('jobs', page = page - 1, size = 10) }}"><span aria-hidden="true">&laquo;</span> Newer</a></li>
+               {% else %}
+               <li class="disabled"><a href="#"><span aria-hidden="true">&laquo;</span> Newer</a></li>
+               {% endif %}
+               <li>Page {{ page }} of {{ pages_count }}</li>
+               {% if page != pages_count %}
+               <li><a href="{{ url_for('jobs', page = page + 1, size = 10) }}">Older <span aria-hidden="true">&raquo;</span></a></li>
+               {% else %}
+               <li class="disabled"><a href="#">Older <span aria-hidden="true">&raquo;</span></a></li>
+               {% endif %}
+            </ul>
+         </nav>
+         {% endif %}
+      </div>
+   </body>
+</html>
